@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosAdapter } from 'axios';
 import { cacheAdapterEnhancer } from 'axios-extensions';
 import qs from 'qs';
 import { isEmpty, parseUrl } from './helper';
@@ -16,17 +16,6 @@ const DEFAULT_PARAMS = {
   lang: apiConfig.lang
 };
 
-const formConn = axios.create({
-  baseURL: API_SERVER_URL,
-  headers: {
-    'Content-Type': 'multipart/form-data',
-    Accept: 'application/json'
-  },
-  withCredentials: false,
-  responseType: 'json',
-  validateStatus: status => status >= 200 && status < 500
-});
-
 /**
  * api conn
  *
@@ -39,7 +28,7 @@ const jsonConn = axios.create({
     'Content-Type': 'application/x-www-form-urlencoded',
     Accept: 'application/json'
   },
-  adapter: cacheAdapterEnhancer(axios.defaults.adapter, {
+  adapter: cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, {
     enabledByDefault: true
   }),
   withCredentials: false,
@@ -75,8 +64,8 @@ const get = async ({ pathname = '', params = {}, cache = false }) => {
  * @param {json} requiredParams
  * @param {json} params
  */
-const getRequestParams = (requiredParams, params, url) => {
-  let requestParams = {};
+const getRequestParams = (requiredParams: any, params: any, url: string) => {
+  let requestParams: any = {};
 
   // DEFAULT_PARAMS을 앞으로 보내기 위해 추가. by cjkim
   // 해당 구문이 없을경우 main page의경우 api_key를 requiredParams에서 빈값으로 덮어씌워버린다.
@@ -88,25 +77,31 @@ const getRequestParams = (requiredParams, params, url) => {
 
   // set required params
   if (!isEmpty(requiredParams)) {
-    requestParams = Object.keys(requiredParams).reduce((result, key) => {
-      if (!key) {
+    requestParams = Object.keys(requiredParams).reduce(
+      (result: any, key: string) => {
+        if (!key) {
+          return result;
+        }
+        result[key] = requiredParams[key]
+          ? requiredParams[key]
+          : requestParams[key];
         return result;
-      }
-      result[key] = requiredParams[key]
-        ? requiredParams[key]
-        : requestParams[key];
-      return result;
-    }, {});
+      },
+      {}
+    );
   } else {
-    requestParams = Object.keys(requestParams).reduce((result, key) => {
-      if (!key) {
+    requestParams = Object.keys(requestParams).reduce(
+      (result: any, key: string) => {
+        if (!key) {
+          return result;
+        }
+        result[key] = requiredParams[key]
+          ? requiredParams[key]
+          : requestParams[key];
         return result;
-      }
-      result[key] = requiredParams[key]
-        ? requiredParams[key]
-        : requestParams[key];
-      return result;
-    }, {});
+      },
+      {}
+    );
   }
 
   return requestParams;
