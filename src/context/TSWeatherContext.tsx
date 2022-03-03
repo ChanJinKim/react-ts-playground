@@ -1,15 +1,55 @@
 import react, { useEffect, useState, useContext } from 'react';
 import api from '../lib/api';
 
+interface AreaItem {
+  idx: number;
+  title: string;
+  lon: string;
+  lat: string;
+}
+
+const getAreaList = (): AreaItem[] => {
+  return [
+    {
+      idx: 0,
+      title: '서울',
+      lon: '126.98',
+      lat: '37.563'
+    },
+    {
+      idx: 1,
+      title: '부산',
+      lon: '129.076',
+      lat: '35.177'
+    },
+    {
+      idx: 2,
+      title: '대구',
+      lon: '128.608',
+      lat: '35.867'
+    }
+  ];
+};
+interface TSWeatherContextValue {
+  weatherData: any;
+  areaList: AreaItem[];
+  selectedArea: AreaItem | null;
+}
 interface ChildrenProps {
   children: React.ReactNode;
 }
 
-const TSWeatherContext = react.createContext({});
+const TSWeatherContext = react.createContext<TSWeatherContextValue>({
+  weatherData: {},
+  areaList: [],
+  selectedArea: null
+});
 
 function TSWeatherProvider({ children }: ChildrenProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [data, setData] = useState({});
+  const [areaList, setAreaList] = useState(getAreaList());
+  const [selectedArea, setSelectedArea] = useState(areaList[0]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -18,8 +58,8 @@ function TSWeatherProvider({ children }: ChildrenProps) {
           pathname: '/data/2.5/weather',
           params: {
             units: 'metric',
-            lon: '126.98',
-            lat: '37.563'
+            lon: selectedArea.lon,
+            lat: selectedArea.lat
           },
           cache: false
         });
@@ -39,9 +79,7 @@ function TSWeatherProvider({ children }: ChildrenProps) {
     <>
       {isLoaded === true && (
         <TSWeatherContext.Provider
-          value={{
-            weatherData: data
-          }}
+          value={{ weatherData: data, areaList, selectedArea }}
         >
           {children}
         </TSWeatherContext.Provider>
