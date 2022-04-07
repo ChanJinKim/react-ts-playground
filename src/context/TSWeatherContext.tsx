@@ -1,4 +1,4 @@
-import react, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import api from '../lib/api';
 
 interface AreaItem {
@@ -34,22 +34,26 @@ interface TSWeatherContextValue {
   weatherData: any;
   areaList: AreaItem[];
   selectedArea: AreaItem | null;
+  setSelectedArea: React.Dispatch<React.SetStateAction<AreaItem>>;
+  setAreaList: React.Dispatch<React.SetStateAction<AreaItem[]>>;
 }
 interface ChildrenProps {
   children: React.ReactNode;
 }
 
-const TSWeatherContext = react.createContext<TSWeatherContextValue>({
+const TSWeatherContext = React.createContext<TSWeatherContextValue>({
   weatherData: {},
   areaList: [],
-  selectedArea: null
+  selectedArea: null,
+  setSelectedArea: () => {},
+  setAreaList: () => {}
 });
 
 function TSWeatherProvider({ children }: ChildrenProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [data, setData] = useState({});
   const [areaList, setAreaList] = useState(getAreaList());
-  const [selectedArea, setSelectedArea] = useState(areaList[0]);
+  const [selectedArea, setSelectedArea] = useState<AreaItem>(areaList[0]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -73,13 +77,19 @@ function TSWeatherProvider({ children }: ChildrenProps) {
     };
 
     fetch();
-  }, []);
+  }, [selectedArea]);
 
   return (
     <>
       {isLoaded === true && (
         <TSWeatherContext.Provider
-          value={{ weatherData: data, areaList, selectedArea }}
+          value={{
+            weatherData: data,
+            areaList,
+            setAreaList,
+            selectedArea,
+            setSelectedArea
+          }}
         >
           {children}
         </TSWeatherContext.Provider>

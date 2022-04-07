@@ -7,8 +7,6 @@ import TSWeatherContents from './TSWeather/components/TSWeatherContents';
  * TS Weather
  */
 export default function TSWeather() {
-  console.log('TSWeather - ');
-
   return (
     <TSWeatherProvider>
       <TSWeatherHeader />
