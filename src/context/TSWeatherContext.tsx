@@ -4,8 +4,9 @@ import api from '../lib/api';
 interface AreaItem {
   idx: number;
   title: string;
-  lon: string;
-  lat: string;
+  query: string;
+  lon?: string;
+  lat?: string;
 }
 
 const getAreaList = (): AreaItem[] => {
@@ -13,18 +14,21 @@ const getAreaList = (): AreaItem[] => {
     {
       idx: 0,
       title: '서울',
+      query: 'seoul',
       lon: '126.98',
       lat: '37.563'
     },
     {
       idx: 1,
       title: '부산',
+      query: 'busan',
       lon: '129.076',
       lat: '35.177'
     },
     {
       idx: 2,
       title: '대구',
+      query: 'daegu',
       lon: '128.608',
       lat: '35.867'
     }
@@ -62,6 +66,7 @@ function TSWeatherProvider({ children }: ChildrenProps) {
           pathname: '/data/2.5/weather',
           params: {
             units: 'metric',
+            q: selectedArea.query,
             lon: selectedArea.lon,
             lat: selectedArea.lat
           },

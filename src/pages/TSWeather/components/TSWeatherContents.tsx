@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React, { ChangeEvent, MouseEvent, useState } from 'react';
 import { useTSWeatherContext } from '../../../context/TSWeatherContext';
 
 /**
@@ -7,6 +7,7 @@ import { useTSWeatherContext } from '../../../context/TSWeatherContext';
 export default function TSWeatherContents() {
   const { weatherData, areaList, selectedArea, setSelectedArea, setAreaList } =
     useTSWeatherContext();
+  const [area, setArea] = useState('');
 
   // console.log('weatherData - ', weatherData);
   // console.log('areaList - ', areaList);
@@ -27,13 +28,12 @@ export default function TSWeatherContents() {
    */
   const handleAreaClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const { idx, title, lon, lat } = event.currentTarget.dataset;
-    if (idx && title && lon && lat) {
+    const { idx, title, query } = event.currentTarget.dataset;
+    if (idx && title && query) {
       setSelectedArea({
         idx: parseInt(idx),
         title,
-        lon,
-        lat
+        query
       });
     }
   };
@@ -60,18 +60,45 @@ export default function TSWeatherContents() {
     }
   };
 
+  /**
+   * 지역 추가 input
+   * @param event
+   */
+  const handleInputAreaChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setArea(event.target.value);
+  };
+
+  /**
+   * 지역 추가 button
+   * @param event
+   */
+  const handleAreaButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setAreaList(prev => {
+      const lastItem = prev[prev.length - 1];
+      return [
+        ...prev,
+        { idx: Number(lastItem?.idx) + 1, title: area, query: area }
+      ];
+    });
+  };
+
   const areaTitle = selectedArea?.title || '';
 
   return (
     <>
+      <h4>지역 추가</h4>
+      <input name="area" value={area} onChange={handleInputAreaChange} />
+      <button onClick={handleAreaButtonClick}>추가</button>
+
       <h4>지역 목록</h4>
       <ul>
-        {areaList.map(({ idx, title, lon, lat }) => (
+        {areaList.map(({ idx, title, query }) => (
           <li key={idx}>
             <button
               data-idx={idx}
-              data-lon={lon}
-              data-lat={lat}
+              data-query={query}
               data-title={title}
               onClick={handleAreaClick}
             >
