@@ -40,6 +40,8 @@ interface TSWeatherContextValue {
   selectedArea: AreaItem | null;
   setSelectedArea: React.Dispatch<React.SetStateAction<AreaItem>>;
   setAreaList: React.Dispatch<React.SetStateAction<AreaItem[]>>;
+  area: string;
+  setArea: React.Dispatch<React.SetStateAction<string>>;
 }
 interface ChildrenProps {
   children: React.ReactNode;
@@ -50,14 +52,21 @@ const TSWeatherContext = React.createContext<TSWeatherContextValue>({
   areaList: [],
   selectedArea: null,
   setSelectedArea: () => {},
-  setAreaList: () => {}
+  setAreaList: () => {},
+  area: '',
+  setArea: () => {}
 });
 
+/**
+ * TSWeather State Provider
+ * @returns
+ */
 function TSWeatherProvider({ children }: ChildrenProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [data, setData] = useState({});
   const [areaList, setAreaList] = useState(getAreaList());
   const [selectedArea, setSelectedArea] = useState<AreaItem>(areaList[0]);
+  const [area, setArea] = useState('');
 
   useEffect(() => {
     const fetch = async () => {
@@ -93,7 +102,9 @@ function TSWeatherProvider({ children }: ChildrenProps) {
             areaList,
             setAreaList,
             selectedArea,
-            setSelectedArea
+            setSelectedArea,
+            area,
+            setArea
           }}
         >
           {children}
