@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import TestComponent from '../shared-component/src/components/test';
 
 export default function Main() {
   return (
@@ -16,6 +17,7 @@ export default function Main() {
           <Link to="/ts-weather">TS Weather</Link>
         </li>
       </ul>
+      <TestComponent />
     </>
   );
 }
