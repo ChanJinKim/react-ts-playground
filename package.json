@@ -23,11 +23,19 @@
     "typescript": "^4.5.5",
     "web-vitals": "^2.1.4"
   },
+  "config": {
+    "subtree_origin_name": "subtree-component-test",
+    "subtree_branch": "master",
+    "subtree_directory": "src/shared-component"
+  },
   "scripts": {
     "start": "cross-env PORT=3455 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "add-shared-component": "git subtree add --prefix $npm_package_config_subtree_directory $npm_package_config_subtree_origin_name $npm_package_config_subtree_branch",
+    "push-shared-component": "git subtree push --prefix $npm_package_config_subtree_directory $npm_package_config_subtree_origin_name $npm_package_config_subtree_branch",
+    "pull-shared-component": "git subtree pull --prefix $npm_package_config_subtree_directory $npm_package_config_subtree_origin_name $npm_package_config_subtree_branch"
   },
   "eslintConfig": {
     "extends": [
